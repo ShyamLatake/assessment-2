@@ -6,6 +6,12 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <title>HFrEF Presentation - Auto Slideshow</title>
+    <script>
+      // Redirect to login.html if not logged in
+      if (localStorage.getItem("loggedIn") !== "true") {
+        window.location.href = "login.html";
+      }
+    </script>
   </head>
   <body>
     <div class="template-container">
