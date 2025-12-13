@@ -1,0 +1,10 @@
+/*
+  Basic-Auth: demouser:password@321
+  
+  IMPORTANT: Replace 'username:password' with your actual credentials before deploying.
+  Example: Basic-Auth: admin:SecurePass123
+  
+  This file enables HTTP Basic Authentication on Netlify.
+  When users visit your site, they'll be prompted for username and password.
+*/
+
