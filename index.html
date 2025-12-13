@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <title>HFrEF Presentation - Auto Slideshow</title>
+  </head>
+  <body>
+    <div class="template-container">
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <!-- Navigation Panel - Right Bottom -->
+      <div class="nav-panel" id="navPanel">
+        <div class="nav-buttons-group">
+          <button class="nav-btn prev-btn" id="prevBtn" aria-label="Previous page">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+            </svg>
+          </button>
+          <button class="play-pause-btn" id="playPauseBtn" aria-label="Pause slideshow">
+            <svg class="pause-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+            </svg>
+            <svg class="play-icon" viewBox="0 0 24 24" fill="currentColor" style="display: none">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </button>
+          <button class="nav-btn next-btn" id="nextBtn" aria-label="Next page">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+            </svg>
+          </button>
+          <button class="settings-btn" id="settingsBtn" aria-label="Settings">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"
+              />
+            </svg>
+          </button>
+          <button class="hide-nav-btn" id="hideNavBtn" aria-label="Hide navigation">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path
+                d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <!-- Settings Panel -->
+        <div class="settings-panel" id="settingsPanel">
+          <div class="settings-header">
+            <h3>Settings</h3>
+            <button class="close-settings-btn" id="closeSettingsBtn" aria-label="Close settings">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                />
+              </svg>
+            </button>
+          </div>
+          <div class="settings-content">
+            <div class="setting-item">
+              <label for="slideIntervalInput">Slide Interval (seconds)</label>
+              <div class="input-group">
+                <input type="number" id="slideIntervalInput" min="1" max="60" value="5" step="1" />
+                <span class="input-unit">sec</span>
+              </div>
+              <div class="setting-description">
+                Time each slide is displayed before auto-advancing
+              </div>
+            </div>
+            <button class="apply-settings-btn" id="applySettingsBtn">Apply Settings</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Show Navigation Button (when hidden) -->
+      <button
+        class="show-nav-btn"
+        id="showNavBtn"
+        aria-label="Show navigation"
+        style="display: none"
+      >
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z" />
+        </svg>
+      </button>
+      <div class="video-wrapper">
+        <div class="video-container">
+          <!-- PAGE 1 -->
+          <div class="video-slide active" data-page="1">
+            <section id="section-1">
+              <!-- Heartbeat Animation Element -->
+              <div class="heartbeat-animation">
+                <svg class="heartbeat-line" viewBox="0 0 600 120" preserveAspectRatio="none">
+                  <defs>
+                    <linearGradient id="heartbeatGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" style="stop-color: rgba(220, 38, 38, 0); stop-opacity: 0" />
+                      <stop
+                        offset="50%"
+                        style="stop-color: rgba(220, 38, 38, 1); stop-opacity: 1"
+                      />
+                      <stop
+                        offset="100%"
+                        style="stop-color: rgba(220, 38, 38, 0); stop-opacity: 0"
+                      />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    class="heartbeat-path"
+                    d="M0,60 L40,60 L45,20 L50,100 L55,30 L60,80 L65,50 L70,60 L120,60 L125,20 L130,100 L135,30 L140,80 L145,50 L150,60 L200,60 L205,20 L210,100 L215,30 L220,80 L225,50 L230,60 L280,60 L285,20 L290,100 L295,30 L300,80 L305,50 L310,60 L360,60 L365,20 L370,100 L375,30 L380,80 L385,50 L390,60 L440,60 L445,20 L450,100 L455,30 L460,80 L465,50 L470,60 L520,60 L525,20 L530,100 L535,30 L540,80 L545,50 L550,60 L600,60"
+                    fill="none"
+                    stroke="#dc2626"
+                    stroke-width="3"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </div>
+
+              <div class="logo-container">
+                <img
+                  src="logo.png"
+                  alt="HETERO Logo"
+                  width="80"
+                  height="80"
+                  loading="eager"
+                  fetchpriority="high"
+                />
+              </div>
+              <div class="header-banner-container">
+                <div class="banner-wrapper">
+                  <h1 data-animate="fade-slide-down" data-delay="0" data-duration="1200">
+                    HFrEF: A CHALLENGE WE CAN OVERCOME
+                  </h1>
+                </div>
+              </div>
+
+              <!-- Section 2: People Collage -->
+              <div class="people-collage-wrapper">
+                <div class="people-collage">
+                  <div class="people-strip">
+                    <img
+                      src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=600&fit=crop&crop=faces"
+                      alt="Person 1 laughing"
+                      class="person-image"
+                      width="200"
+                      height="300"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="people-strip">
+                    <img
+                      src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=600&fit=crop&crop=faces"
+                      alt="Person 2 laughing"
+                      class="person-image"
+                      width="200"
+                      height="300"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="people-strip">
+                    <img
+                      src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=600&fit=crop&crop=faces"
+                      alt="Person 3 laughing"
+                      class="person-image"
+                      width="200"
+                      height="300"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="people-strip">
+                    <img
+                      src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=600&fit=crop&crop=faces"
+                      alt="Person 4 laughing"
+                      class="person-image"
+                      width="200"
+                      height="300"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="people-strip hidden-mobile">
+                    <img
+                      src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=600&fit=crop&crop=faces"
+                      alt="Person 5 laughing"
+                      class="person-image"
+                      width="200"
+                      height="300"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="people-strip hidden-mobile">
+                    <img
+                      src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=600&fit=crop&crop=faces"
+                      alt="Person 6 laughing"
+                      class="person-image"
+                      width="200"
+                      height="300"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="people-strip hidden-mobile">
+                    <img
+                      src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=600&fit=crop&crop=faces"
+                      alt="Person 7 laughing"
+                      class="person-image"
+                      width="200"
+                      height="300"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="people-strip hidden-mobile">
+                    <img
+                      src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=600&fit=crop&crop=faces"
+                      alt="Person 8 laughing"
+                      class="person-image"
+                      width="200"
+                      height="300"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                  <div class="people-strip hidden-mobile">
+                    <img
+                      src="https://images.unsplash.com/photo-1506277886164-e25aa3f4ef7f?w=400&h=600&fit=crop&crop=faces"
+                      alt="Person 9 laughing"
+                      class="person-image"
+                      width="200"
+                      height="300"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Section 3: Bottom Banner -->
+              <div class="bottom-banner-container">
+                <div class="bottom-banner">
+                  <p
+                    class="banner-content"
+                    data-animate="fade-slide-up"
+                    data-delay="500"
+                    data-duration="1000"
+                  >
+                    GDMT is transforming the landscape of HFrEF management, offering a proven
+                    roadmap to
+                    <strong>dramatically improve patient outcomes.</strong>
+                  </p>
+                  <hr
+                    class="banner-divider"
+                    data-animate="fade-scale"
+                    data-delay="1200"
+                    data-duration="800"
+                  />
+                  <p
+                    class="banner-highlight suboptimal-pulse"
+                    data-animate="fade-slide-up"
+                    data-delay="500"
+                    data-duration="1000"
+                  >
+                    <strong>YET, GDMT ADOPTION REMAINS SUBOPTIMAL.</strong>
+                  </p>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- PAGE 2 -->
+          <div class="video-slide" data-page="2">
+            <section id="section-2">
+              <div class="page2-container">
+                <!-- Top Banner -->
+                <div
+                  class="top-banner"
+                  data-animate="fade-slide-down"
+                  data-delay="0"
+                  data-duration="1000"
+                >
+                  <h2 class="banner-text">
+                    First line GDMT having class I recommendations in the 2022 AHA/ACC/HFSA
+                    guidelines for HFrEF
+                  </h2>
+                </div>
+
+                <!-- Main Content Area -->
+                <div class="main-content-area">
+                  <!-- Left Section - GDMT Diagram -->
+                  <div class="diagram-section">
+                    <!-- Section Labels - Above and Below -->
+                    <h2 class="section-label first-line-label">FIRST LINE GDMT</h2>
+
+                    <!-- Animated Heart Infographic -->
+                    <div class="heart-infographic-container">
+                      <div class="heart-wrapper">
+                        <!-- Central Heart Area (White Circle) -->
+                        <div class="heart-center-circle">
+                          <img src="heart.svg" alt="Heart" width="100%" height="100%" />
+                        </div>
+
+                        <!-- Circular Background with 8 Segments -->
+                        <div class="circle-background">
+                          <!-- Segment dividing lines -->
+                          <div class="segment-divider" style="--angle: -45deg"></div>
+                          <div class="segment-divider" style="--angle: 0deg"></div>
+                          <div class="segment-divider" style="--angle: 45deg"></div>
+                          <div class="segment-divider" style="--angle: 90deg"></div>
+                          <div class="segment-divider" style="--angle: 135deg"></div>
+                          <div class="segment-divider" style="--angle: 180deg"></div>
+                          <div class="segment-divider" style="--angle: 225deg"></div>
+                          <div class="segment-divider" style="--angle: 270deg"></div>
+                        </div>
+
+                        <!-- GDMT Treatment Labels (Directly on Segments) -->
+                        <div class="gdmt-labels">
+                          <!-- First Line GDMT (Top Half - Teal) -->
+                          <div class="gdmt-label first-line faded" style="--angle: -67.5deg">
+                            <span class="label-text">Beta Blocker</span>
+                          </div>
+                          <div class="gdmt-label first-line faded" style="--angle: -22.5deg">
+                            <span class="label-text">Aldosterone Inhibitor</span>
+                          </div>
+                          <div class="gdmt-label first-line highlighted" style="--angle: 22.5deg">
+                            <span class="label-text">ACEI/ARB/ARNI</span>
+                          </div>
+                          <div class="gdmt-label first-line highlighted" style="--angle: 67.5deg">
+                            <span class="label-text">SGLT-2 Inhibitor</span>
+                          </div>
+
+                          <!-- Second Line GDMT (Bottom Half - Pink) -->
+                          <div class="gdmt-label second-line faded" style="--angle: 112.5deg">
+                            <span class="label-text">Isordil/Hydralazine</span>
+                          </div>
+                          <div class="gdmt-label second-line faded" style="--angle: 157.5deg">
+                            <span class="label-text">Vericiguat</span>
+                          </div>
+                          <div class="gdmt-label second-line faded" style="--angle: 202.5deg">
+                            <span class="label-text">Ivabradine</span>
+                          </div>
+                          <div class="gdmt-label second-line faded" style="--angle: 247.5deg">
+                            <span class="label-text">Digoxin</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <h2 class="section-label second-line-label">SECOND LINE GDMT</h2>
+                  </div>
+
+                  <!-- Right Section - DID YOU KNOW? -->
+                  <div class="info-section">
+                    <div
+                      class="did-you-know-card"
+                      data-animate="fade-slide-left"
+                      data-delay="600"
+                      data-duration="1000"
+                    >
+                      <!-- Header -->
+                      <div class="did-you-know-header">
+                        <div class="lightbulb-container">
+                          <div class="lightbulb-icon">
+                            <svg
+                              width="36"
+                              height="36"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <!-- Yellow rays/glow effect -->
+                              <circle cx="12" cy="12" r="11" fill="#FCD34D" opacity="0.5" />
+                              <circle cx="12" cy="12" r="9" fill="#FCD34D" opacity="0.4" />
+                              <circle cx="12" cy="12" r="7" fill="#FCD34D" opacity="0.3" />
+                              <!-- White lightbulb -->
+                              <path
+                                d="M12 2C8.13 2 5 5.13 5 9C5 11.38 6.19 13.47 8 14.74V17C8 17.55 8.45 18 9 18H15C15.55 18 16 17.55 16 17V14.74C17.81 13.47 19 11.38 19 9C19 5.13 15.87 2 12 2ZM14 13.7L13 14.3V16H11V14.3L10 13.7C8.84 13.03 8 11.61 8 10C8 7.79 9.79 6 12 6C14.21 6 16 7.79 16 10C16 11.61 15.16 13.03 14 13.7Z"
+                                fill="#FFFFFF"
+                              />
+                              <!-- Primary color base -->
+                              <path
+                                d="M9 21C9 21.55 9.45 22 10 22H14C14.55 22 15 21.55 15 21V20H9V21Z"
+                                fill="var(--primary-color)"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                        <h3 class="did-you-know-title">DID YOU KNOW?</h3>
+                      </div>
+
+                      <!-- Content -->
+                      <div class="did-you-know-content">
+                        <ul class="info-list">
+                          <li data-animate="fade-slide-up" data-delay="800" data-duration="800">
+                            Optimal <strong>GDMT</strong> can reduce mortality by over
+                            <strong
+                              ><span
+                                class="count-up-percent"
+                                data-count-up="70"
+                                data-delay="2000"
+                                data-duration="2000"
+                                data-suffix="% (2)"
+                                >0</span
+                              ></strong
+                            >, while significantly enhancing the quality of life for patients with
+                            <strong>HFrEF</strong>.
+                          </li>
+                          <li data-animate="fade-slide-up" data-delay="1000" data-duration="800">
+                            Lead the Change with <strong>Breakthrough Therapies</strong>
+                          </li>
+                          <li data-animate="fade-slide-up" data-delay="1200" data-duration="800">
+                            <strong>Sacubitril/Valsartan</strong>: Redefining neurohormonal
+                            modulation in heart failure.
+                          </li>
+                          <li data-animate="fade-slide-up" data-delay="1400" data-duration="800">
+                            <strong>Dapagliflozin</strong>: Transforming cardiorenal care.
+                          </li>
+                          <li data-animate="fade-slide-up" data-delay="1600" data-duration="800">
+                            Together, these therapies are at the forefront of a revolution in
+                            <strong>HFrEF treatment</strong>, empowering physicians to
+                            <strong>deliver life-changing results</strong>.
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- PAGE 3 -->
+          <div class="video-slide" data-page="3">
+            <section id="section-3">
+              <div class="page3-container">
+                <!-- Top Section: Foundational Drugs -->
+                <div class="drugs-header">
+                  <div class="main-title">
+                    Elevate Heart Failure Treatment: Embrace the Power of <strong>GDMT</strong> with
+                  </div>
+
+                  <div class="drugs-container">
+                    <div class="drug-item">
+                      <div class="drug-indication">
+                        To reduce the risk of <strong>CV death & Hospitalization</strong> in Chronic
+                        Heart Failure
+                      </div>
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">℞</div>
+                        <div class="drug-name">SACUVAN</div>
+                      </div>
+                      <div class="drug-generic">
+                        Sacubitril Valsartan <br />
+                        26, 49/51 & 97/103 mg Tablets
+                      </div>
+                    </div>
+
+                    <div class="drug-connector">&</div>
+
+                    <div class="drug-item">
+                      <div class="drug-indication">
+                        In Congestive <strong>Heart Failure</strong>
+                        <br />
+                      </div>
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">℞</div>
+                        <div class="drug-name">Glyda</div>
+                      </div>
+                      <div class="drug-generic">
+                        Dapagliflozin 5 mg/10 mg Tablets
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Middle Section: Sequencing Banner -->
+                <div
+                  class="sequencing-banner"
+                  appFadeSlideIn="fade-slide-down"
+                  [delay]="300"
+                  [duration]="1000"
+                >
+                  <h2 class="sequencing-text">
+                    Rapid Evidence-Based Sequencing of Foundational Drugs for HFrEF
+                  </h2>
+                </div>
+
+                <!-- Main Infographic Flow -->
+                <div class="infographic-wrapper">
+                  <div class="infographic-headline">
+                    Heart Failure Fighters: GDMT's Fantastic Four
+                  </div>
+
+                  <div class="infographic-flow">
+                    <!-- Left: HFrEF Heart -->
+                    <div class="heart-start-section">
+                      <div class="heart-icon-container">
+                        <div class="heart-pulse-circles">
+                          <div class="pulse-circle pulse-1"></div>
+                          <div class="pulse-circle pulse-2"></div>
+                          <div class="pulse-circle pulse-3"></div>
+                        </div>
+                        <img src="heart.svg" alt="Heart" width="100%" height="100%" />
+                      </div>
+                      <p class="heart-label">
+                        Heart Failure with Reduced Ejection Fraction (HFrEF)
+                      </p>
+                    </div>
+
+                    <!-- Arrow with Text -->
+                    <div class="arrow-section">
+                      <p class="arrow-text-top">
+                        Simultaneous or rapid sequence initiation of GDMT
+                      </p>
+                      <div class="arrow-container">
+                        <div class="arrow-line"></div>
+                        <div class="arrow-head"></div>
+                      </div>
+                      <div class="all-patients-badge">
+                        <svg
+                          class="running-icon"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                        <span>All patients</span>
+                      </div>
+                    </div>
+
+                    <!-- Center: GDMT Temple with 4 Pillars -->
+                    <div class="temple">
+                      <div class="roof">
+                        <div class="roof-text">Guideline-Directed Medical Therapy</div>
+                      </div>
+
+                      <!-- Horizontal beam between roof and pillars -->
+                      <div class="architrave"></div>
+
+                      <div class="pillars-container">
+                        <div class="pillars">
+                          <div class="pillar" data-therapy="ARNi">
+                            <div class="pillar-capital">
+                              <div class="pillar-title">ARNi</div>
+                              <div class="pillar-drugs">&nbsp;</div>
+                            </div>
+                            <div class="pillar-shaft"><span>ACEI ARB</span></div>
+                            <div class="pillar-base"></div>
+                            <div class="arrow">↓</div>
+                            <div class="mechanism">RAAS<br />inhibition</div>
+                          </div>
+
+                          <div class="pillar" data-therapy="BB">
+                            <div class="pillar-capital">
+                              <div class="pillar-title">BB</div>
+                              <div class="pillar-drugs">&nbsp;</div>
+                            </div>
+                            <div class="pillar-shaft"></div>
+                            <div class="pillar-base"></div>
+                            <div class="arrow">↓</div>
+                            <div class="mechanism">Sympathetic<br />activation</div>
+                          </div>
+
+                          <div class="pillar" data-therapy="MRA">
+                            <div class="pillar-capital">
+                              <div class="pillar-title">MRA</div>
+                              <div class="pillar-drugs">&nbsp;</div>
+                            </div>
+                            <div class="pillar-shaft"></div>
+                            <div class="pillar-base"></div>
+                            <div class="arrow">↓</div>
+                            <div class="mechanism">Aldosterone<br />inhibition</div>
+                          </div>
+
+                          <div class="pillar" data-therapy="SGLT2i">
+                            <div class="pillar-capital">
+                              <div class="pillar-title">SGLT2i</div>
+                              <div class="pillar-drugs">&nbsp;</div>
+                            </div>
+                            <div class="pillar-shaft"></div>
+                            <div class="pillar-base"></div>
+                            <div class="arrow">↓</div>
+                            <div class="mechanism">Osmotic<br />diuresis & natriuresis</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="benefits-section">
+                      <h3 class="benefits-title">Benefits</h3>
+                      <ul class="benefits-list">
+                        <li class="benefit-item decrease">
+                          <span class="arrow-down">↓</span>
+                          <span>Preload</span>
+                        </li>
+                        <li class="benefit-item decrease">
+                          <span class="arrow-down">↓</span>
+                          <span>Afterload</span>
+                        </li>
+                        <li class="benefit-item decrease">
+                          <span class="arrow-down">↓</span>
+                          <span>Myocardial O₂ demand</span>
+                        </li>
+                        <li class="benefit-item increase">
+                          <span class="arrow-up">↑</span>
+                          <span>Coronary perfusion</span>
+                        </li>
+                        <li class="benefit-item increase">
+                          <span class="arrow-up">↑</span>
+                          <span>Reverse cardiac remodeling</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <!-- Right: Benefits List -->
+                  </div>
+                </div>
+
+                <!-- Bottom Banner: Conclusion -->
+                <!-- <div class="highlight-message" data-animate="fade-slide-up" data-delay="1500" data-duration="1000"> -->
+                <p
+                  class="highlight-text"
+                  data-animate="fade-slide-up"
+                  data-delay="1500"
+                  data-duration="1000"
+                >
+                  <strong class="suboptimal-pulse"
+                    >Early GDMT saves lives, prevents readmissions, and enhances living</strong
+                  >
+                </p>
+                <!-- </div> -->
+              </div>
+            </section>
+          </div>
+
+          <!-- PAGE 4 -->
+          <div class="video-slide" data-page="4">
+            <section id="section-4">
+              <div class="page4-container">
+                <!-- Top Section: Title and Drugs -->
+                <div class="drugs-header">
+                  <div class="main-title">
+                    Elevate Heart Failure Treatment: Embrace the Power of <strong>GDMT</strong> with
+                  </div>
+
+                  <div class="drugs-container">
+                    <div class="drug-item">
+                      <div class="drug-indication">
+                        To reduce the risk of <strong>CV death & Hospitalization</strong> in Chronic
+                        Heart Failure
+                      </div>
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">℞</div>
+                        <div class="drug-name">SACUVAN</div>
+                      </div>
+                      <div class="drug-generic">
+                        Sacubitril Valsartan <br />
+                        26, 49/51 & 97/103 mg Tablets
+                      </div>
+                    </div>
+
+                    <div class="drug-connector">&</div>
+
+                    <div class="drug-item">
+                      <div class="drug-indication">
+                        In Congestive <strong>Heart Failure</strong>
+                        <br />
+                      </div>
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">℞</div>
+                        <div class="drug-name">Glyda</div>
+                      </div>
+                      <div class="drug-generic">
+                        Dapagliflozin 5 mg/10 mg Tablets
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div
+                  class="sequencing-banner"
+                  appFadeSlideIn="fade-slide-down"
+                  [delay]="300"
+                  [duration]="1000"
+                >
+                  <h2 class="sequencing-text">
+                    Rapid Evidence-Based Sequencing of Foundational Drugs for HFrEF
+                  </h2>
+                </div>
+                <!-- Side by Side Comparison -->
+                <div class="comparison-wrapper">
+                  <div class="comparison-container">
+                    <!-- Left Side: Conventional Sequencing -->
+                    <div class="sequencing-panel conventional-panel">
+                      <div class="panel-header conventional-header">
+                        <h2>CONVENTIONAL SEQUENCING</h2>
+                        <div class="header-to-step-connector"></div>
+                      </div>
+
+                      <div class="timeline-container">
+                        <div class="timeline-step" data-step-index="0" data-animate-delay="0.2">
+                          <div class="step-number-wrapper">
+                            <div class="step-number">
+                              <span class="step-label">Step</span>
+                              <span class="step-num">1</span>
+                            </div>
+                          </div>
+                          <div
+                            class="step-content"
+                            style="border-top-color: #fbbf24; border-right-color: #fbbf24"
+                          >
+                            <div class="step-title">
+                              ACE inhibitor or angiotensin receptor blocker
+                            </div>
+                          </div>
+                        </div>
+                        <div class="timeline-step" data-step-index="1" data-animate-delay="0.4">
+                          <div class="step-number-wrapper">
+                            <div class="step-number">
+                              <span class="step-label">Step</span>
+                              <span class="step-num">2</span>
+                            </div>
+                          </div>
+                          <div
+                            class="step-content"
+                            style="border-top-color: #f97316; border-right-color: #f97316"
+                          >
+                            <div class="step-title">Beta-blocker</div>
+                          </div>
+                        </div>
+                        <div class="timeline-step" data-step-index="2" data-animate-delay="0.6">
+                          <div class="step-number-wrapper">
+                            <div class="step-number">
+                              <span class="step-label">Step</span>
+                              <span class="step-num">3</span>
+                            </div>
+                          </div>
+                          <div
+                            class="step-content"
+                            style="border-top-color: #14b8a6; border-right-color: #14b8a6"
+                          >
+                            <div class="step-title">Mineralocorticoid receptor antagonist</div>
+                          </div>
+                        </div>
+                        <div class="timeline-step" data-step-index="3" data-animate-delay="0.8">
+                          <div class="step-number-wrapper">
+                            <div class="step-number">
+                              <span class="step-label">Step</span>
+                              <span class="step-num">4</span>
+                            </div>
+                          </div>
+                          <div
+                            class="step-content"
+                            style="border-top-color: #a855f7; border-right-color: #a855f7"
+                          >
+                            <div class="step-title">Angiotensin receptor neprilysin inhibitor</div>
+                          </div>
+                        </div>
+                        <div class="timeline-step" data-step-index="4" data-animate-delay="1.0">
+                          <div class="step-number-wrapper">
+                            <div class="step-number">
+                              <span class="step-label">Step</span>
+                              <span class="step-num">5</span>
+                            </div>
+                          </div>
+                          <div
+                            class="step-content"
+                            style="border-top-color: #1e40af; border-right-color: #1e40af"
+                          >
+                            <div class="step-title">SGLT2 inhibitor</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="timeframe conventional-timeframe">
+                        <strong>Up titration to target doses at each step</strong>
+                        Typically requires <strong>6 months or more</strong>
+                      </div>
+                    </div>
+
+                    <!-- Right Side: Rapid Sequencing -->
+                    <div class="sequencing-panel rapid-panel">
+                      <div class="panel-header rapid-header">
+                        <h2>RAPID SEQUENCING</h2>
+                        <div class="header-to-step-connector"></div>
+                      </div>
+
+                      <div class="timeline-container">
+                        <div class="timeline-step" data-step-index="0" data-animate-delay="0.2">
+                          <div class="step-number-wrapper">
+                            <div class="step-number">
+                              <span class="step-label">Step</span>
+                              <span class="step-num">1</span>
+                            </div>
+                          </div>
+                          <div
+                            class="step-content"
+                            style="border-top-color: #10b981; border-right-color: #10b981"
+                          >
+                            <div class="step-title">ARNI + Beta-blocker + MRA</div>
+                          </div>
+                        </div>
+                        <div class="timeline-step" data-step-index="1" data-animate-delay="0.4">
+                          <div class="step-number-wrapper">
+                            <div class="step-number">
+                              <span class="step-label">Step</span>
+                              <span class="step-num">2</span>
+                            </div>
+                          </div>
+                          <div
+                            class="step-content"
+                            style="border-top-color: #10b981; border-right-color: #10b981"
+                          >
+                            <div class="step-title">Add SGLT2 inhibitor</div>
+                          </div>
+                        </div>
+                        <div class="timeline-step" data-step-index="2" data-animate-delay="0.6">
+                          <div class="step-number-wrapper">
+                            <div class="step-number">
+                              <span class="step-label">Step</span>
+                              <span class="step-num">3</span>
+                            </div>
+                          </div>
+                          <div
+                            class="step-content"
+                            style="border-top-color: #10b981; border-right-color: #10b981"
+                          >
+                            <div class="step-title">Up titration to target doses</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="timeframe rapid-timeframe">
+                        <strong>All 3 steps achieved within 4 weeks</strong>
+                        Up titration to target doses thereafter
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- References -->
+                <div class="references">
+                  <span><strong>SGLT2:</strong> Sodium-glucose cotransporter-2.</span>
+                  <span>
+                    <strong>Ref.:</strong>
+                    <a
+                      href="https://onlinelibrary.wiley.com/doi/10.1002/ejhf.2206"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="reference-link"
+                    >
+                      Packer M, et al. Eur J Heart Fail. 2021;23:882-894.
+                    </a>
+                  </span>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- PAGE 5 -->
+          <div class="video-slide" data-page="5">
+            <section id="section-5">
+              <div class="page5-container">
+                <div class="drugs-header">
+                  <div class="main-title">
+                    Elevate Heart Failure Treatment: Embrace the Power of <strong>GDMT</strong> with
+                  </div>
+
+                  <div class="drugs-container">
+                    <div class="drug-item">
+                      <div class="drug-indication">
+                        To reduce the risk of <strong>CV death & Hospitalization</strong> in Chronic
+                        Heart Failure
+                      </div>
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">℞</div>
+                        <div class="drug-name">SACUVAN</div>
+                      </div>
+                      <div class="drug-generic">
+                        Sacubitril Valsartan <br />
+                        26, 49/51 & 97/103 mg Tablets
+                      </div>
+                    </div>
+
+                    <div class="drug-connector">&</div>
+
+                    <div class="drug-item">
+                      <div class="drug-indication">
+                        In Congestive <strong>Heart Failure</strong>
+                        <br />
+                      </div>
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">℞</div>
+                        <div class="drug-name">Glyda</div>
+                      </div>
+                      <div class="drug-generic">
+                        Dapagliflozin 5 mg/10 mg Tablets
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Middle Section: Slogan Banner -->
+                <div
+                  class="slogan-banner"
+                  data-animate="fade-slide-down"
+                  data-delay="300"
+                  data-duration="1000"
+                >
+                  <h2 class="slogan-text">
+                    Two Proven Paths for <strong>Stronger Hearts and Lasting Protection</strong>
+                  </h2>
+                </div>
+
+                <!-- Bottom Section: Trial Results -->
+                <div class="trials-container">
+                  <!-- Left Circle: PARADIGM-HF Trial -->
+                  <div class="trial-circle paradigm-circle">
+                    <div class="trial-header paradigm-header">
+                      <span> <strong>PARADIGM-HF Trial¹</strong></span>
+                    </div>
+                    <div class="trial-content">
+                      <strong>20% reduction</strong> in cardiovascular death or HF hospitalization
+                      compared to enalapril in patients with
+                      <strong>HFrEF already receiving MRAs and Bbs.</strong>
+                    </div>
+                  </div>
+
+                  <!-- Central Text Block -->
+                  <div class="central-text">
+                    Empower Your <strong>HF Patients</strong> with
+                    <strong>Evidence-Based Care</strong>.
+                  </div>
+
+                  <!-- Right Circle: DAPA-HF Trial -->
+                  <div class="trial-circle dapa-circle">
+                    <div class="trial-header dapa-header">
+                      <span> <strong>DAPA-HF Trial²</strong></span>
+                    </div>
+                    <div class="trial-content">
+                      <strong>26% reduction</strong> in the composite risk of
+                      <strong>cardiovascular death or worsening HF,</strong> even in patients
+                      already receiving
+                      <strong> MRAs and Bbs.</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom-Most Section: Concluding Statement and References -->
+                <div class="conclusion-section">
+                  <div
+                    class="conclusion-text suboptimal-pulse"
+                    data-animate="fade-slide-up"
+                    data-delay="900"
+                    data-duration="1000"
+                  >
+                    Dapagliflozin and Sacubitril/Valsartan - Redefining the Standard in
+                    <strong class="suboptimal-pulse">Heart Failure Management</strong>
+                  </div>
+                  <div class="references">
+                    <div class="reference-item">
+                      <strong> Ref 1:</strong>
+                      <a
+                        href="https://www.nejm.org/doi/full/10.1056/NEJMoa1409077"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="reference-link"
+                      >
+                        n engl j med 371;11 nejm.org september 11, 2014
+                      </a>
+                    </div>
+                    <div class="reference-item">
+                      <strong> 2:</strong>
+                      <a
+                        href="https://www.nejm.org/doi/full/10.1056/NEJMoa1911303"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="reference-link"
+                      >
+                        n engl j med 381,21 nejm.org November 21, 2019
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- PAGE 6 -->
+          <div class="video-slide" data-page="6">
+            <section id="section-6">
+              <div class="page6-container">
+                <div class="drugs-header">
+                  <div class="main-title">
+                    Elevate Heart Failure Treatment: Embrace the Power of <strong>GDMT</strong> with
+                  </div>
+
+                  <div class="drugs-container">
+                    <div class="drug-item">
+                      <div class="drug-indication">
+                        To reduce the risk of <strong>CV death & Hospitalization</strong> in Chronic
+                        Heart Failure
+                      </div>
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">℞</div>
+                        <div class="drug-name">SACUVAN</div>
+                      </div>
+                      <div class="drug-generic">
+                        Sacubitril Valsartan <br />
+                        26, 49/51 & 97/103 mg Tablets
+                      </div>
+                    </div>
+
+                    <div class="drug-connector">&</div>
+
+                    <div class="drug-item">
+                      <div class="drug-indication">
+                        In Congestive <strong>Heart Failure</strong>
+                        <br />
+                      </div>
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">℞</div>
+                        <div class="drug-name">Glyda</div>
+                      </div>
+                      <div class="drug-generic">
+                        Dapagliflozin 5 mg/10 mg Tablets
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Top Banner -->
+                <div
+                  class="slogan-banner"
+                  data-animate="fade-slide-down"
+                  data-delay="300"
+                  data-duration="1000"
+                >
+                  <h2 class="slogan-text">
+                    Two Proven Paths for <strong>Stronger Hearts and Lasting Protection</strong>
+                  </h2>
+                </div>
+
+                <!-- Main Content Area -->
+                <div class="main-content-wrapper">
+                  <!-- Left Panel - Medical Benefits -->
+                  <div
+                    class="benefits-panel"
+                    data-animate="fade-slide-right"
+                    data-delay="500"
+                    data-duration="800"
+                  >
+                    <ul class="benefits-list">
+                      <li class="benefit-item">
+                        <span class="bullet"></span>
+                        <span class="benefit-text"
+                          >Improves cardiac function in patients with <strong>HFrEF</strong></span
+                        >
+                      </li>
+                      <li class="benefit-item">
+                        <span class="bullet"></span>
+                        <span class="benefit-text"
+                          >Greater reduction in <strong>LAD and NT-proBNP levels</strong> compared
+                          to Sacubitril/Valsartan monotherapy</span
+                        >
+                      </li>
+                      <li class="benefit-item">
+                        <span class="bullet"></span>
+                        <span class="benefit-text"
+                          >Offers more <strong>potent cardiovascular benefits</strong></span
+                        >
+                      </li>
+                      <li class="benefit-item">
+                        <span class="bullet"></span>
+                        <span class="benefit-text"
+                          >Improved cardiac function, In patients with <strong>HFrEF</strong></span
+                        >
+                      </li>
+                      <li class="benefit-item">
+                        <span class="bullet"></span>
+                        <span class="benefit-text"
+                          ><strong>ARNI & Dapagliflozin</strong> showed an independent reduction in
+                          <strong>CV death and HF</strong></span
+                        >
+                      </li>
+                      <li class="benefit-item">
+                        <span class="bullet"></span>
+                        <span class="benefit-text"
+                          >Exerted better effects than <strong>ACEI or ARB</strong></span
+                        >
+                      </li>
+                      <li class="benefit-item">
+                        <span class="bullet"></span>
+                        <span class="benefit-text"
+                          >Reduces <strong>morbidity and mortality</strong> in patients with
+                          <strong>HFrEF</strong></span
+                        >
+                      </li>
+                    </ul>
+                  </div>
+
+                  <!-- Right Panel - Photo Collage -->
+                  <div
+                    class="photo-collage"
+                    data-animate="fade-slide-left"
+                    data-delay="700"
+                    data-duration="800"
+                  >
+                    <div class="photo-item photo-1">
+                      <img
+                        src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=200&h=200&fit=crop&crop=faces"
+                        alt="Patient 1"
+                      />
+                    </div>
+                    <div class="photo-item photo-2">
+                      <img
+                        src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces"
+                        alt="Patient 2"
+                      />
+                    </div>
+                    <div class="photo-item photo-3">
+                      <img
+                        src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=faces"
+                        alt="Patient 3"
+                      />
+                    </div>
+                    <div class="photo-item photo-4">
+                      <img
+                        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces"
+                        alt="Patient 4"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Footer Section -->
+                <div class="footer-section">
+                  <!-- References -->
+                  <div class="references-section">
+                    <div class="reference-item">
+                      <strong>Ref:</strong> 1.
+                      <a
+                        href="https://www.frontiersin.org/articles/10.3389/fcvm.2023.109706/full"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="reference-link"
+                      >
+                        Frontiers in Cardiovascular Medicine 22 March 2023 | DOI
+                        10.3389/fcvm.2023.109706
+                      </a>
+                    </div>
+                    <div class="reference-item">
+                      2.
+                      <a
+                        href="https://www.sciencedirect.com/science/article/pii/S0019483221003125"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="reference-link"
+                      >
+                        Indian Heart Journal 73 (2021) 6056611
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- Abbreviations -->
+                  <div class="abbreviations-section">
+                    <div class="abbreviation-item">
+                      <strong>ACEI:</strong>
+                      <a
+                        href="https://en.wikipedia.org/wiki/Angiotensin-converting_enzyme_inhibitor"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="abbreviation-link"
+                      >
+                        Angiotensin-converting enzyme inhibitor
+                      </a>
+                    </div>
+                    <div class="abbreviation-item">
+                      <strong>ARB:</strong>
+                      <a
+                        href="https://en.wikipedia.org/wiki/Angiotensin_receptor_blocker"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="abbreviation-link"
+                      >
+                        Angiotensin receptor blockers
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- PAGE 7 -->
+          <div class="video-slide" data-page="7">
+            <section id="section-7">
+              <div class="page7-container">
+                <!-- Banner Section -->
+                <div
+                  class="glyda-banner"
+                  data-animate="fade-scale"
+                  data-delay="100"
+                  data-duration="800"
+                >
+                  <div class="banner-header">In Congestive <strong>Heart Failure</strong></div>
+                  <div class="banner-content">
+                    <div class="banner-main">
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">Px</div>
+                        <div class="drug-name">Glyda</div>
+                      </div>
+                      <div class="dosage-info">Dapagliflozin 5 mg/10 mg Tablets</div>
+                    </div>
+                  </div>
+                  <div class="banner-tagline">Being Smart, Beyond Glycaemic Control</div>
+                </div>
+
+                <!-- Main Infographic Box -->
+                <div
+                  class="infographic-box"
+                  data-animate="fade-scale"
+                  data-delay="300"
+                  data-duration="800"
+                >
+                  <!-- Two Column Layout -->
+                  <div class="sections-wrapper">
+                    <!-- Left Section: BETTER GLYCAEMIC CONTROL -->
+                    <div class="benefit-section left-section">
+                      <div class="metrics-container">
+                        <div class="section-header glycaemic-header">BETTER GLYCAEMIC CONTROL</div>
+
+                        <div class="metric-items-container">
+                          <div class="metric-item horizontal-item">
+                            <div class="metric-icon a1c-icon">
+                              <span class="metric-value">0.89%</span>
+                              <div class="overlay-mask"></div>
+                              <div class="metric-label">
+                                <div class="label-line-1">A1c</div>
+                                <div class="label-line-2">Reduction¹</div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="metric-item horizontal-item">
+                            <div class="metric-icon glycaemic-icon">
+                              <span class="metric-value">24 hr</span>
+                              <div class="overlay-mask"></div>
+                              <div class="metric-label">
+                                <div class="label-line-1">Glycaemic</div>
+                                <div class="label-line-2">control²</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="benefit-box weight-box">
+                          <div class="benefit-title">Weight Reduction⁴</div>
+                          <div class="arrow-container">
+                            <div class="arrow-icon weight-arrow">
+                              <div class="arrow-detail"></div>
+                            </div>
+                            <div class="arrow-value-container">
+                              <div class="arrow-value-number">-3.22</div>
+                              <div class="arrow-value-unit">kg</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Right Section: CV Benefits -->
+                    <div class="benefit-section right-section">
+                      <div class="metrics-container">
+                        <div class="section-header cv-header">CV Benefits</div>
+
+                        <div class="metric-item horizontal-item extra-margin">
+                          <div class="metric-icon cv-icon">
+                            <span class="metric-value">27%</span>
+                            <div class="overlay-mask"></div>
+                            <div class="metric-label">
+                              <div class="label-line-1">RRR*</div>
+                              <div class="label-line-2">of hHF³**</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="benefit-box bp-box">
+                          <div class="benefit-title">Reduction in BP⁵</div>
+                          <div class="arrow-container">
+                            <div class="arrow-icon bp-arrow">
+                              <div class="arrow-detail"></div>
+                            </div>
+                            <div class="arrow-value-container">
+                              <div class="arrow-value-number">-4.3</div>
+                              <div class="arrow-value-unit">mmHg</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Footer Section: Footnotes and References -->
+                <div class="footer-section">
+                  <div class="footnotes">
+                    <div class="footnote-text">
+                      *RRR: Relative Risk Reduction; **hHF: Hospitalization Due to Heart Failure;
+                      T2DM- Type 2 Diabetes Mellitus, CV: Cardiovascular
+                    </div>
+                  </div>
+                  <div class="references-section">
+                    <div class="reference-item">
+                      <strong>Ref:</strong> 1.
+                      <a
+                        href="https://journals.sagepub.com/doi/10.1177/2042098614555240"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="reference-link"
+                      >
+                        Ther Adv Drug Saf. 2014 Dec; 5(6): 242-254.
+                      </a>
+                    </div>
+                    <div class="reference-item">
+                      2.
+                      <a
+                        href="https://www.liebertpub.com/doi/10.1089/dia.2018.0128"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="reference-link"
+                      >
+                        Diabetes Technol Ther. 2018 Nov,20(11):715-724.
+                      </a>
+                    </div>
+                    <div class="reference-item">
+                      3.
+                      <a
+                        href="https://www.nejm.org/doi/full/10.1056/NEJMoa1812389"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="reference-link"
+                      >
+                        N Engl J Med 2019; 380:347-357
+                      </a>
+                    </div>
+                    <div class="reference-item">
+                      4.
+                      <a
+                        href="https://diabetesjournals.org/care/article/34/9/2015/38720/Efficacy-and-Safety-of-Sitagliptin-Compared-with"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="reference-link"
+                      >
+                        NAUCK MA, et.al. Diabetes Care. 2015:34:1-8
+                      </a>
+                    </div>
+                    <div class="reference-item">
+                      5.
+                      <a
+                        href="https://journals.sagepub.com/doi/10.1177/2042098614555240"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="reference-link"
+                      >
+                        Ther Adv Drug Saf. 2014 Dec; 5(6): 242-254.
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- PAGE 8 -->
+          <div class="video-slide" data-page="8">
+            <section id="section-8">
+              <div class="page8-container">
+                <div class="drugs-header">
+                  <div class="main-title">
+                    Elevate Heart Failure Treatment: Embrace the Power of <strong>GDMT</strong> with
+                  </div>
+
+                  <div class="drugs-container">
+                    <div class="drug-item">
+                      <div class="drug-indication">
+                        To reduce the risk of <strong>CV death & Hospitalization</strong> in Chronic
+                        Heart Failure
+                      </div>
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">℞</div>
+                        <div class="drug-name">SACUVAN</div>
+                      </div>
+                      <div class="drug-generic">
+                        Sacubitril Valsartan <br />
+                        26, 49/51 & 97/103 mg Tablets
+                      </div>
+                    </div>
+
+                    <div class="drug-connector">&</div>
+
+                    <div class="drug-item">
+                      <div class="drug-indication">
+                        In Congestive <strong>Heart Failure</strong>
+                        <br />
+                      </div>
+                      <div class="drug-name-wrapper">
+                        <div class="rx-symbol">℞</div>
+                        <div class="drug-name">Glyda</div>
+                      </div>
+                      <div class="drug-generic">
+                        Dapagliflozin 5 mg/10 mg Tablets
+                        <br />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Central Slogan Banner -->
+                <div
+                  class="slogan-banner"
+                  data-animate="fade-slide-down"
+                  data-delay="300"
+                  data-duration="1000"
+                >
+                  <h2 class="slogan-text">
+                    Two Proven Paths for <strong>Stronger Hearts and Lasting Protection</strong>
+                  </h2>
+                </div>
+
+                <!-- Two Column Layout -->
+                <div class="drugs-content-wrapper">
+                  <!-- Left Column - SACUVAN -->
+                  <div
+                    class="drug-column sacuvan-column"
+                    data-animate="fade-slide-right"
+                    data-delay="500"
+                    data-duration="800"
+                  >
+                    <!-- INDICATION Box -->
+                    <div class="info-box indication-box sacuvan-indication">
+                      <div class="info-box-label">INDICATION</div>
+                      <div class="info-box-content">
+                        For adults with chronic heart failure-reduces CV death and hospitalization,
+                        with greatest benefit in low LVEF
+                      </div>
+                    </div>
+
+                    <!-- DOSAGE AND ADMINISTRATION Table -->
+                    <div class="dosage-table-container">
+                      <div class="dosage-table-header">DOSAGE AND ADMINISTRATION*</div>
+                      <table class="dosage-table">
+                        <thead>
+                          <tr class="sub-header-row">
+                            <th>Indication</th>
+                            <th colspan="3">Titration Step Dose (Twice daily)</th>
+                          </tr>
+                          <tr class="sub-header-row">
+                            <th></th>
+                            <th>Starting</th>
+                            <th>Second</th>
+                            <th>Final</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Adult heart Failure</td>
+                            <td>49/51 mg</td>
+                            <td colspan="2">97/103 mg</td>
+                          </tr>
+                          <tr>
+                            <td>Pediatric Heart Failure Patients ≤ 40 kg</td>
+                            <td>1.6 mg/kg</td>
+                            <td>2.3 mg/kg</td>
+                            <td>3.1 mg/kg</td>
+                          </tr>
+                          <tr>
+                            <td>Pediatric Heart Failure Patients 40 kg to 50 kg</td>
+                            <td>24/26 mg</td>
+                            <td>49 / 51 mg</td>
+                            <td>75 / 78 mg</td>
+                          </tr>
+                          <tr>
+                            <td>Pediatric Heart Failure Patients ≥ 50 kg</td>
+                            <td>49/51 mg</td>
+                            <td>72 / 78 mg</td>
+                            <td>97 / 103 mg</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Packshot Placeholder -->
+                    <div class="packshot-placeholder">
+                      <div class="packshot-text">PACKSHOT</div>
+                    </div>
+                  </div>
+
+                  <!-- Right Column - Glyda -->
+                  <div
+                    class="drug-column glyda-column"
+                    data-animate="fade-slide-left"
+                    data-delay="700"
+                    data-duration="800"
+                  >
+                    <!-- INDICATION Box -->
+                    <div class="info-box indication-box glyda-indication">
+                      <div class="info-box-label">INDICATION</div>
+                      <div class="info-box-content">
+                        <ul class="indication-list">
+                          <li>
+                            To reduce the risk of cardiovascular death, hospitalization for heart
+                            failure, and urgent heart failure visit in adults with
+                            <strong>heart failure.</strong>
+                          </li>
+                          <li>
+                            To reduce the risk of hospitalization for heart failure in adults with
+                            type 2 diabetes mellitus and either established
+                            <strong>cardiovascular disease</strong> or
+                            <strong>multiple cardiovascular risk factors</strong>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                    <!-- DOSAGE Box -->
+                    <div class="info-box dosage-box glyda-dosage">
+                      <div class="info-box-label">DOSAGE</div>
+                      <div class="info-box-content">
+                        <div class="dosage-section">
+                          <strong>Type 2 Diabetes Mellitus:</strong>
+                        </div>
+                        <ul class="dosage-list">
+                          <li>
+                            To reduce the risk of hospitalization for heart failure in adults with
+                            type 2 diabetes mellitus and established<br />
+                            <strong>CV disease or multiple CV risk factors</strong>: 10 mg once
+                            daily.
+                          </li>
+                          <li>
+                            <strong>Heart Failure:</strong> Recommended dose is 10 mg once daily.
+                          </li>
+                        </ul>
+                        <div class="dosage-disclaimer">
+                          (Not recommended for glycemic control when the eGFR is less than 45
+                          mL/min/1.73 m², Assess renal function before initiating and then as
+                          clinically indicated.)
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Product Packaging Images -->
+                    <div class="product-images">
+                      <img
+                        src="page8.png"
+                        alt="Product packaging"
+                        loading="lazy"
+                        onerror="this.style.display='none'"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- PAGE 9 -->
+          <div class="video-slide" data-page="9">
+            <section id="section-9">
+              <div class="page9-container">
+                <!-- Background Image with Blur -->
+                <div class="background-image-wrapper">
+                  <img src="page9.png" alt="Elderly couple" class="blurred-bg-image" />
+                  <div class="background-overlay"></div>
+                </div>
+
+                <!-- Text Overlays (Top) -->
+                <div
+                  class="top-text-overlay"
+                  data-animate="fade-slide-down"
+                  data-delay="200"
+                  data-duration="1000"
+                >
+                  <p class="overlay-line-1">The Race doesn't end with Beta-Blockers -</p>
+                  <p class="overlay-line-2">Even on GDMT, the Heart often refuses to slow down#</p>
+                </div>
+
+                <!-- Product Image -->
+                <div class="product-image-container">
+                  <img src="ividin.png" alt="IVIDIN Product" class="product-image" />
+                </div>
+
+                <!-- Slogan/Call to Action (Bottom-Left) -->
+                <div
+                  class="slogan-block"
+                  data-animate="fade-slide-up"
+                  data-delay="800"
+                  data-duration="1000"
+                >
+                  <p class="slogan-main">It's time to intervene</p>
+                  <p class="slogan-sub">where others can't -Heart Rate*</p>
+                  <p class="slogan-note">
+                    *Since Lower heart rate (HR) is associated with a better prognosis in heart
+                    failure (HF).
+                  </p>
+                  <p class="medical-text">
+                    In HFrEF (LVEF ≤35%) patients with sinus rhythm & HR ≥70 bpm,<br />
+                    to reduce hospitalizations when beta-blockers are optimized or not tolerated
+                  </p>
+                </div>
+
+                <!-- Medical Context (Bottom-Middle to Right) -->
+                <div
+                  class="medical-context-block"
+                  data-animate="fade-slide-up"
+                  data-delay="1000"
+                  data-duration="1000"
+                >
+                  <p class="gdmt-abbreviation">GDMT: Guideline-directed Medical Therapy</p>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <!-- PAGE 10 -->
+          <div class="video-slide" data-page="10">
+            <section id="section-10">
+              <div class="page10-container">
+                <!-- Top Section - Product Indication and Branding -->
+                <div class="top-section">
+                  <div class="main-header">
+                    In HFrEF (LVEF ≤35%) patients with sinus rhythm & HR ≥70 bpm,
+                    <br />to reduce hospitalizations when beta-blockers are optimized or not
+                    tolerated
+                  </div>
+
+                  <div class="product-branding">
+                    <div class="product-image-wrapper">
+                      <img src="ividin.png" alt="IVIDIN" class="product-brand-image" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Middle Section - Clinical Trial Results -->
+                <div class="trial-section" #trialSection>
+                  <div class="trial-title">
+                    SHIFT Trial: Ivabradine Demonstrates Efficacy & Safety in High-Risk HFrEF
+                    Patients irrespective of SBP, LVEF, or NYHA Class¹
+                  </div>
+
+                  <!-- Results and Graph Container -->
+                  <div class="results-graph-wrapper">
+                    <!-- Key Results Boxes -->
+                    <div class="results-boxes">
+                      <div class="result-box orange-outer-box">
+                        <div class="result-inner-box orange-box">
+                          <div class="result-percentage">18%</div>
+                          <div class="result-description">
+                            Relative risk reduction in the primary endpoint.
+                          </div>
+                          <div class="result-arrow orange-arrow"></div>
+                        </div>
+                        <div class="orange-circle"></div>
+                        <div class="top-connection-line orange-line"></div>
+                      </div>
+                      <div class="connection-center">
+                        <div class="connection-line"></div>
+                        <div class="connection-square"></div>
+                      </div>
+                      <div class="result-box green-outer-box">
+                        <div class="green-circle"></div>
+                        <div class="result-inner-box green-box">
+                          <div class="result-percentage">26%</div>
+                          <div class="result-description">
+                            Significant reduction in heart failure hospitalizations.
+                          </div>
+                          <div class="result-arrow green-arrow"></div>
+                        </div>
+                        <div class="bottom-connection-line green-line"></div>
+                      </div>
+                    </div>
+
+                    <!-- Graph Placeholder -->
+                    <div class="graph-container" data-clickable="true">
+                      <img
+                        src="graph-10.png"
+                        alt="Cumulative Frequency Graph"
+                        class="graph-image"
+                      />
+                      <div class="graph-click-hint">Click to read article</div>
+                    </div>
+                  </div>
+
+                  <!-- Bottom Section - Product Packaging -->
+                  <div class="packaging-section">
+                    <img src="medi-10.png" alt="" />
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
